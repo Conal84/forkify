@@ -2,11 +2,11 @@ import * as model from './model.js';
 import recipeView from './views/recipeView.js';
 import searchView from './views/searchView.js';
 import resultsView from './views/resultsView.js';
-import PaginationView from './views/paginationView.js';
+import bookmarksView from './views/bookmarksView.js';
+import paginationView from './views/paginationView.js';
 
 import 'regenerator-runtime/runtime';
 import 'core-js/stable';
-import paginationView from './views/paginationView.js';
 
 // if (module.hot) {
 //   module.hot.accept();
@@ -28,6 +28,9 @@ const controlRecipes = async function () {
 
     // 3) Render recipe HTML in view (front end)
     recipeView.render(model.state.recipe);
+
+    // 4) Update bookmarks view
+    bookmarksView.update(model.state.bookmarks);
   } catch (err) {
     recipeView.renderError();
   }
@@ -77,10 +80,18 @@ const controlBookmarks = function () {
 
   // 2) Update the view
   recipeView.update(model.state.recipe);
+
+  // 3) Render bookmarks preview
+  bookmarksView.render(model.state.bookmarks);
+};
+
+const controlBookmarkRender = function () {
+  bookmarksView.render(model.state.bookmarks);
 };
 
 // Pass controller functions to event handlers in the view
 const init = function () {
+  bookmarksView.addHandlerRender(controlBookmarkRender);
   recipeView.addHandlerRender(controlRecipes);
   searchView.addHandlerSearch(controlSearchResults);
   paginationView.addHandlerClick(controlPagination);
