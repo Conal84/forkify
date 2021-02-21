@@ -13,6 +13,17 @@ class RecipeView extends View {
     ['hashchange', 'load'].forEach(ev => window.addEventListener(ev, handler));
   }
 
+  // Add event listeners for servings btns
+  // Use event delegation to listner for a click on the parent element
+  // Then use the closest method to find the closest btn--tiny clicked
+  addHandlerServings(handler) {
+    this._parentElement.addEventListener('click', function (e) {
+      const btn = e.target.closest('.btn--tiny');
+      if (!btn) return;
+      handler();
+    });
+  }
+
   _generateMarkup() {
     return `
     <figure class="recipe__fig">
