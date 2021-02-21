@@ -70,12 +70,22 @@ const controlServings = function (newServings) {
   recipeView.update(model.state.recipe);
 };
 
+const controlBookmarks = function () {
+  // 1) Update bookmark in state
+  if (!model.state.recipe.bookmarked) model.addBookmark(model.state.recipe);
+  else model.deleteBookmark(model.state.recipe.id);
+
+  // 2) Update the view
+  recipeView.update(model.state.recipe);
+};
+
 // Pass controller functions to event handlers in the view
 const init = function () {
   recipeView.addHandlerRender(controlRecipes);
   searchView.addHandlerSearch(controlSearchResults);
   paginationView.addHandlerClick(controlPagination);
   recipeView.addHandlerServings(controlServings);
+  recipeView.addHandlerBookmarks(controlBookmarks);
 };
 
 init();
