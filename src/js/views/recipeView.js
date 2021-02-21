@@ -15,12 +15,13 @@ class RecipeView extends View {
 
   // Add event listeners for servings btns
   // Use event delegation to listner for a click on the parent element
-  // Then use the closest method to find the closest btn--tiny clicked
+  // Then use the closest method to find the closest btn--update-servings clicked
   addHandlerServings(handler) {
     this._parentElement.addEventListener('click', function (e) {
-      const btn = e.target.closest('.btn--tiny');
+      const btn = e.target.closest('.btn--update-servings');
       if (!btn) return;
-      handler();
+      const updateTo = +btn.dataset.update;
+      if (updateTo > 0) handler(updateTo);
     });
   }
 
@@ -55,12 +56,16 @@ class RecipeView extends View {
         <span class="recipe__info-text">servings</span>
 
         <div class="recipe__info-buttons">
-          <button class="btn--tiny btn--increase-servings">
+          <button class="btn--tiny btn--update-servings" data-update="${
+            this._data.servings - 1
+          }">
             <svg>
-              <use href="src/img/icons.svg#icon-minus-circle"></use>
+              <use href="${icons}#icon-minus-circle"></use>
             </svg>
           </button>
-          <button class="btn--tiny btn--increase-servings">
+          <button class="btn--tiny btn--update-servings" data-update="${
+            this._data.servings + 1
+          }">
             <svg>
               <use href="${icons}#icon-plus-circle"></use>
             </svg>

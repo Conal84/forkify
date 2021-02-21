@@ -19,11 +19,14 @@ const controlRecipes = async function () {
     if (!id) return;
     recipeView.renderSpinner();
 
-    // 1) Retrieving recipe data from model (back end)
+    // 1) Update results view to highlight selected result
+    resultsView.update(model.getSearchResultsPage());
+
+    // 2) Retrieving recipe data from model (back end)
     await model.loadRecipe(id);
     const recipe = model.state.recipe;
 
-    // 2) Render recipe HTML in view (front end)
+    // 3) Render recipe HTML in view (front end)
     recipeView.render(model.state.recipe);
   } catch (err) {
     recipeView.renderError();
@@ -59,12 +62,12 @@ const controlPagination = function (goToPage) {
   paginationView.render(model.state.search);
 };
 
-const controlServings = function () {
+const controlServings = function (newServings) {
   // 1) Update recipe servings in state
-  model.updateServings(8);
+  model.updateServings(newServings);
 
   // 2) Update the view
-  recipeView.render(model.state.recipe);
+  recipeView.update(model.state.recipe);
 };
 
 // Pass controller functions to event handlers in the view

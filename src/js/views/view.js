@@ -6,10 +6,47 @@ export default class View {
   render(data) {
     if (!data || (Array.isArray(data) && data.length === 0))
       return this.renderError();
+
     this._data = data;
     const markup = this._generateMarkup();
     this._clear();
     this._parentElement.insertAdjacentHTML('afterbegin', markup);
+  }
+
+  update(data) {
+    if (!data || (Array.isArray(data) && data.length === 0))
+      return this.renderError();
+
+    this._data = data;
+    const newMarkup = this._generateMarkup();
+
+    // Convert string newMarkup into a virtual DOM object
+    const newDOM = document.createRange().createContextualFragment(newMarkup);
+    const newElements = Array.from(newDOM.querySelectorAll('*'));
+    const currElements = Array.from(this._parentElement.querySelectorAll('*'));
+
+    // Compare each virtual element to the current element
+    newElements.forEach((newEl, i) => {
+      const currEl = currElements[i];
+
+      /* 
+      Update text elements if current element and new elements are different
+      And they are text elements
+      */
+      if (
+        !newEl.isEqualNode(currEl) &&
+        newEl.firstChild?.nodeValue.trim() !== ''
+      ) {
+        currEl.textContent = newEl.textContent;
+      }
+
+      // Update data attributes
+      if (!newEl.isEqualNode(currEl)) {
+        Array.from(newEl.attributes).forEach(attr =>
+          currEl.setAttribute(attr.name, attr.value)
+        );
+      }
+    });
   }
 
   _clear() {
