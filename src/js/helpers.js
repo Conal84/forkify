@@ -12,6 +12,33 @@ const timeout = function (s) {
   });
 };
 
+export const AJAX = async function (url, uploadData = undefined) {
+  try {
+    const fetchPro = uploadData
+      ? fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(uploadData),
+        })
+      : fetch(url);
+
+    // race fetch vs timeout function to prevent slow connecitons running fetch for too long
+    const res = await Promise.race([fetchPro, timeout(TIMEOUT_SECS)]);
+    const data = await res.json();
+
+    if (!res.ok) {
+      throw new Error(`${data.message} ${res.status}`);
+    }
+    return data;
+  } catch (err) {
+    // throwing the error rejects the promise, the error will then be handled by the calling function
+    throw err;
+  }
+};
+
+/*
 export const getJSON = async function (url) {
   try {
     // race fetch vs timeout function to prevent slow connecitons running fetch for too long
@@ -50,4 +77,4 @@ export const sendJSON = async function (url, uploadData) {
     // throwing the error rejects the promise, the error will then be handled by the calling function
     throw err;
   }
-};
+};*/
